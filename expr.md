@@ -32,14 +32,21 @@ Reduce takes one or more time series returned from a query or an expression and 
 - Input Type: Time Series
 - Output Type: Time Series
 
-Resampling resamples each time series to have a consistent time interval. The main use case is so you can resample time series that do not share the same timestamps so math can be performed between them.
+Fields:
+
+- Input: The refID (e.g. `A`) to resample
+-  
+
+Resampling resamples each time series to have a consistent time interval. The main use case is so you can resample time series that do not share the same timestamps so math can be performed between them. This can be done by resample each of the two series, and then in a Math operation referencing the resampled variables.
 
 ### Math
 
 - Input Type: Time Series or Numbers
 - Output Type: Time Series or Numbers
 
-Math is for free form math formulas on time series or number data. Data from other queries or expressions are referenced with the RefID prefixed with a dollar sign, for example `$A`.
+Math is for free form math formulas on time series or number data. Data from other queries or expressions are referenced with the RefID prefixed with a dollar sign, for example `$A`. 
+
+Numeric constants may be in decimal (`2.24`), octal (with a leading zero like `072`), or hex (with a leading 0x like `0x2A`). Exponentials and signs are also supported (e.g., `-0.8e-2`).
 
 #### Operators
 
@@ -53,4 +60,10 @@ With binary operations, such as `$A + $B` or `$A || $B`, the operator is applied
 - If one variable is a number, and the other variable is a time series, then the operation between the value of each point in the time series and the number is performed.
 - If both `$A` and `$B` are time series data, then the operation between each value in the two series is performed for each time stamp that exists in both `$A` and `$B`. The Resample operation can be used to line up time stamps. (Note: in the future, we plan to add options to the Math operation for different behaviors).
 
-Additionally, since expressions work with multiple series or numbers represented by a single variable, binary operations also perform a Union between the two variables. This is done based on the identifying labels associated with each individual series or number.
+Additionally, since expressions work with multiple series or numbers represented by a single variable, binary operations also perform a union (join) between the two variables. This is done based on the identifying labels associated with each individual series or number. So if you have numbers with labels like `{host=web01}` in `$A` and another number in `$B` with the same labels then the operation is performed between those two items within each variable, and the result will share the same labels. The rules for the behavior of this union are as follows:
+
+- An item with no labels will join to anything
+- If both `$A` and `$B` each contain only one item (one series, or one number), they will join.
+- If labels are exact math they will join.
+- If labels are a subset of the other, for example and item in `$A` is labeled `{host=A,dc=MIA}` and and item in `$B` is labeled `{host=A}` they will join.
+- Currently, if within a variable such as `$A` there are different tag _keys_ for each item, the join behavior is undefined.
