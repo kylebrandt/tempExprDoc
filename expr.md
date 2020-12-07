@@ -37,6 +37,7 @@ Reduce takes one or more time series returned from a query or an expression and 
 Note: In the future we plan to add options to control empty, NaN, and null behavior for reduction functions.
 
 ##### Count
+
 Count returns the number of points in each series.
 
 ##### Mean
@@ -93,3 +94,19 @@ Additionally, since expressions work with multiple series or numbers represented
 - If labels are exact math they will join.
 - If labels are a subset of the other, for example and item in `$A` is labeled `{host=A,dc=MIA}` and and item in `$B` is labeled `{host=A}` they will join.
 - Currently, if within a variable such as `$A` there are different tag _keys_ for each item, the join behavior is undefined.
+
+## Data source queries
+
+Data source queries need to be backend data sources. The data is generally assumed to be labeled time series data. In the future we intended to add an assertion of the query return type ("number" or "time series") data so expressions can handle errors better.
+
+Data source queries, when used with expressions, are executed by the expression engine. When it does this, it restructures data to be either one time series or one number per data frame. So for example if using a data source that returns multiple series on one frame in the table view, you may notice it looks different when executed with expressions.
+
+Currently, the only non time series format (number) is supported when using data frames are you have a table response that returns a data frame with no time, string columns, and one number column:
+
+Loc | Host | Avg_CPU |
+----|------| ------- |
+MIA | A    | 1
+NYC | B    | 2
+
+will produce a number that works with expressions. The string columns become labels and the number column the corresponding value. For example `{"Loc": "MIA", "Host": "A"}` with a value of 1.
+
