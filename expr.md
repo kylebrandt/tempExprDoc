@@ -25,7 +25,31 @@ Expressions work with two types of data. Either a collections of time series, or
 - Input Type: Time Series
 - Output Type: Numbers
 
+Fields:
+
+- Input: The variable (refID (e.g. `A`)) to resample
+- Function: The reduction function to use
+
 Reduce takes one or more time series returned from a query or an expression and turns each series into a single number. The labels of the time series are kept as labels on each outputted reduced number.
+
+#### Reduction Functions
+
+Note: In the future we plan to add options to control empty, NaN, and null behavior for reduction functions.
+
+##### Count
+Count returns the number of points in each series.
+
+##### Mean
+
+Mean returns the total of all values in each series divided by the number of points in that series. If any values in the series are null or nan, or if the series is empty, NaN is returned.
+
+##### Min and Max
+
+Min and Max return the smallest or largest value in the series respectively. If any values in the series are null or nan, or if the series is empty, NaN is returned.
+
+##### Sum
+
+Sum returns the total of all values in the series. If series is of zero length, the sum will be 0. If there are any NaN or Null values in the series, NaN is returned.
 
 ### Resample
 
@@ -34,17 +58,19 @@ Reduce takes one or more time series returned from a query or an expression and 
 
 Fields:
 
-- Input: The refID (e.g. `A`) to resample
--  
+- Input: The variable of time series data (refID (e.g. `A`)) to resample
+- Window: The duration of time to resample to, for example `10s`. Units may be `s` seconds, `m` for minutes, `h` for hours, `d` for days, `w` for weeks, and `y` of years.
+- Downsample: The reduction function to use when there are more than one data point per window sample. See the reduction operation for behavior details.
+- Upsample: The method to use to fill a window sample that has no data points: `pad` fills with the last know value, `backfill` with next known value, and `fillna` to fill empty sample windows with NaNs.
 
-Resampling resamples each time series to have a consistent time interval. The main use case is so you can resample time series that do not share the same timestamps so math can be performed between them. This can be done by resample each of the two series, and then in a Math operation referencing the resampled variables.
+Resample changes the time stamps in each time series to have a consistent time interval. The main use case is so you can resample time series that do not share the same timestamps so math can be performed between them. This can be done by resample each of the two series, and then in a Math operation referencing the resampled variables.
 
 ### Math
 
 - Input Type: Time Series or Numbers
 - Output Type: Time Series or Numbers
 
-Math is for free form math formulas on time series or number data. Data from other queries or expressions are referenced with the RefID prefixed with a dollar sign, for example `$A`. 
+Math is for free form math formulas on time series or number data. Data from other queries or expressions are referenced with the RefID prefixed with a dollar sign, for example `$A`.
 
 Numeric constants may be in decimal (`2.24`), octal (with a leading zero like `072`), or hex (with a leading 0x like `0x2A`). Exponentials and signs are also supported (e.g., `-0.8e-2`).
 
