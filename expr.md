@@ -127,6 +127,8 @@ will produce a number that works with expressions. The string columns become lab
 
 ## Using an expression as an AlertingNG condition
 
+### Basic Threshold Alert
+
 Note: When ready, will require `ngalert` feature toggle. The following isn't available yet, but you can follow the following with a Dashboard's Panel edit.
 
 The most common workflow for a basic alert is:
@@ -143,6 +145,18 @@ To do this with expressions:
 
 This will return 0 for false, or 1 for true for each item in the response. So variable `C` becomes the selected condition for alerting.
 
-The following shows an example of the above inside the current Dashboard>Panel Edit UI (This UI will likely change, so this may be out of date). The "eye" icon with expressions does not disable a query, but rather stops expressions from returning the data. This show the combined output of $B and $C in the Stat panel (Generally, viewing output of numbers with stat or a table view works best, and switching to the Graph panel for series).
+The following shows an example of the above inside the current Dashboard>Panel Edit UI (This UI will likely change, so this may be out of date). The "eye" icon with expressions does not disable a query, but rather stops expressions from returning the data. This show the combined output of `B` and `C` in the Stat panel (Generally, viewing output of numbers with stat or a table view works best, and for series the graph panel).
 
 ![image of above description](./condition_example_a.jpg)
+
+### Two Data source Queries, count of points above treshold
+
+The following compares a time series query from one data source against a treshold, and gets the count of points above that threshold:
+
+![image of what is described below](./condition_example_b.jpg)
+
+1. `A` queries time series data from prometheus, labeled by "device".
+2. `B` queries Azure data explorer for table/number response. The string columns become labels, so the numbers are also labeled by "device".
+3. The `C` expression performs time series Operator number math. Using the `>` operator, the series returned will have a point of 1 for each in point in the series of `A` that is greater than the threshold returned from `B` for the each corresponding device.
+4. The `D` reduction sums all the 1 values of `C` per device, to get the count that were above the threshold from `B`. These are the first two rows shown in the visualization (11 for `device=eth0`, and 0 for `device=lo`)
+5. The `E` expression returns 0, 1 if the count of points (expression `D`) is above above 5. The second two rows of the visualization. Show the results for this, which are `1` (true) for `eth0` and 0 (false) for `lo`. This expression would be the condition for the alert.
