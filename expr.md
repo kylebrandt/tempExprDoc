@@ -112,7 +112,7 @@ The relational and logical operators return 0 for false 1 for true.
 
 #### Math Functions
 
-While most functions exist in the own expression operations, the math operation does have some functions that similar to math operators or symbols.
+While most functions exist in the own expression operations, the math operation does have some functions that similar to math operators or symbols. When functions can take either numbers or series, than the same type as the argument will be returned. When it is a series, the operation of performed for the value of each point in the series.
 
 ##### abs
 
