@@ -110,6 +110,22 @@ Additionally, since expressions work with multiple series or numbers represented
 
 The relational and logical operators return 0 for false 1 for true.
 
+#### Math Functions
+
+While most functions exist in the own expression operations, the math operation does have some functions that similar to math operators or symbols.
+
+##### abs
+
+abs returns the absolute value of its argument which can be a number or a series. For example `abs(-1)` or `abs($A)`.
+
+##### log
+
+Log returns the natural logarithm of of its argument which can be a number or a series. If the value is less than 0, NaN is returned. For example `log(-1)` or `log($A)`.
+
+##### inf, nan, and null
+
+The inf, nan, and null functions all return a single value of the name. They primarily exist for testing. Example: `null()`. (Note: inf always returns positive infinity, should probably change this to take an argument so it can return negative infinity).
+
 ## Data source queries
 
 Server side expressions only support data source queries for backend data sources. The data is generally assumed to be labeled time series data. In the future we intended to add an assertion of the query return type ("number" or "time series") data so expressions can handle errors better.
