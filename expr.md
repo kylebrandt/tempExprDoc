@@ -17,6 +17,8 @@ enable = expressions
 
 The primary use case for expressions is with alerting. Like alerting, processing is done server side, so expressions can operate without a browser session. However, Expressions can be used with backend data sources and visualization as well.
 
+Expressions are meant to augment data sources by enabling queries from different data sources to be combined, or by providing operations that a data source does not have. However, when possible, it is better to do data processing inside the data source. Copying data from storage to Grafana's server for processing is not efficient, so expressions are targeted at lightweight data processing.
+
 Expressions work with data source queries that return time series or number data. They also operate on [multiple-dimensional data](https://grafana.com/docs/grafana/latest/getting-started/timeseries-dimensions/) (for example, a query that returns multiple series, where each series is identified by labels or tags).
 
 An individual expression takes one or more queries or other expressions as input, and adds data to the result. Each individual expression or query is represented by a variable which is a named identifer known as it a RefID (e.g., the default letter `A` or `B`). To reference the output of an individual expression or a data source query in another expression, this identifer is used as a variable.
@@ -78,13 +80,13 @@ Resample changes the time stamps in each time series to have a consistent time i
 - Input Type: Time Series or Numbers
 - Output Type: Time Series or Numbers
 
-Math is for free form math formulas on time series or number data. Data from other queries or expressions are referenced with the RefID prefixed with a dollar sign, for example `$A`.
+Math is for free form math formulas on time series or number data. Data from other queries or expressions are referenced with the RefID prefixed with a dollar sign, for example `$A`. If the variable has spaces in the name, then you can use a brace syntax like `${my variable}`.
 
 Numeric constants may be in decimal (`2.24`), octal (with a leading zero like `072`), or hex (with a leading 0x like `0x2A`). Exponentials and signs are also supported (e.g., `-0.8e-2`).
 
 #### Operators
 
-The arithmetic (`+`, binary and unary `-`, `*`, `/`, `%`), relational (`<`, `>`, `==`, `!=`, `>=`, `<=`), and logical (`&&`, `||`, and unary `!`) operators are supported.
+The arithmetic (`+`, binary and unary `-`, `*`, `/`, `%`, exponent `**`), relational (`<`, `>`, `==`, `!=`, `>=`, `<=`), and logical (`&&`, `||`, and unary `!`) operators are supported.
 
 How the operation behaves with data depends on if it is a number or time series data.
 
